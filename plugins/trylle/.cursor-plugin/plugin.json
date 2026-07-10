@@ -1,7 +1,7 @@
 {
   "name": "trylle",
-  "version": "0.1.3",
-  "description": "Operate Trylle repositories and developer workflows with the try CLI.",
+  "version": "0.1.4",
+  "description": "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle.",
   "author": {
     "name": "Trylle"
   },

@@ -1,7 +1,7 @@
 {
   "name": "trylle",
-  "version": "0.1.3",
-  "description": "Operate Trylle repositories and developer workflows with the try CLI.",
+  "version": "0.1.4",
+  "description": "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle.",
   "author": {
     "name": "Trylle",
     "url": "https://trylle.com"
@@ -19,8 +19,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "Trylle",
-    "shortDescription": "Manage Trylle with the try CLI",
-    "longDescription": "Inspect and manage repositories, pull requests, issues, stacks, CI, and platform settings through Trylle's official CLI.",
+    "shortDescription": "Repositories, PRs, issues, CI, and automations",
+    "longDescription": "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle.",
     "developerName": "Trylle",
     "category": "Developer Tools",
     "capabilities": [

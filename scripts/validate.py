@@ -42,7 +42,18 @@ def main() -> int:
     names = {codex["name"], cursor["name"], claude["name"]}
     require(names == {"trylle"}, f"plugin names disagree: {sorted(names)}")
     versions = {codex["version"], cursor["version"], claude["version"]}
-    require(versions == {"0.1.3"}, f"plugin versions disagree: {sorted(versions)}")
+    require(versions == {"0.1.4"}, f"plugin versions disagree: {sorted(versions)}")
+    description = "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle."
+    require(codex["description"] == description, "invalid Codex description")
+    require(cursor["description"] == description, "invalid Cursor description")
+    require(claude["description"] == description, "invalid Claude description")
+    require(codex["interface"].get("shortDescription") == "Repositories, PRs, issues, CI, and automations", "invalid Codex short description")
+    require(codex["interface"].get("longDescription") == description, "invalid Codex long description")
+    marketplace_description = "Trylle workflows for repositories, pull requests, issues, CI, and automations."
+    require(cursor_market["metadata"]["description"] == marketplace_description, "invalid Cursor marketplace summary")
+    require(claude_market["description"] == marketplace_description, "invalid Claude marketplace summary")
+    require(cursor_market["plugins"][0]["description"] == description, "invalid Cursor marketplace description")
+    require(claude_market["plugins"][0]["description"] == description, "invalid Claude marketplace description")
     require(codex.get("skills") == "./skills/", "Codex must load ./skills/")
     require(cursor.get("skills") == "./skills/", "Cursor must load ./skills/")
     require(codex["interface"].get("composerIcon") == "./assets/trylle-32.png", "invalid Codex composer icon")
