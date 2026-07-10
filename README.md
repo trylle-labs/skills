@@ -66,7 +66,8 @@ claude plugin install trylle@trylle
 .cursor-plugin/marketplace.json         # Cursor marketplace
 .claude-plugin/marketplace.json         # Claude Code marketplace
 plugins/trylle/
-├── assets/trylle.png
+├── assets/trylle.png          # Original brand artwork
+├── assets/trylle-plugin.png   # Padded plugin-safe variant
 ├── .codex-plugin/plugin.json
 ├── .cursor-plugin/plugin.json
 ├── .claude-plugin/plugin.json
