@@ -1,0 +1,20 @@
+{
+  "name": "trylle",
+  "interface": {
+    "displayName": "Trylle"
+  },
+  "plugins": [
+    {
+      "name": "trylle",
+      "source": {
+        "source": "local",
+        "path": "./plugins/trylle"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

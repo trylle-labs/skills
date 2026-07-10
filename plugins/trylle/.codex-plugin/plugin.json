@@ -1,0 +1,37 @@
+{
+  "name": "trylle",
+  "version": "0.1.0",
+  "description": "Operate Trylle repositories and developer workflows with the try CLI.",
+  "author": {
+    "name": "Trylle",
+    "url": "https://trylle.com"
+  },
+  "homepage": "https://trylle.com/trylle/trylle-skills",
+  "repository": "https://trylle.com/trylle/trylle-skills",
+  "license": "MIT",
+  "keywords": [
+    "trylle",
+    "git",
+    "pull-requests",
+    "issues",
+    "ci"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Trylle",
+    "shortDescription": "Manage Trylle with the try CLI",
+    "longDescription": "Inspect and manage repositories, pull requests, issues, stacks, CI, and platform settings through Trylle's official CLI.",
+    "developerName": "Trylle",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://trylle.com",
+    "defaultPrompt": [
+      "Show my current Trylle repository context.",
+      "Check the status of this repository's pull request.",
+      "Triage open issues in this Trylle repository."
+    ]
+  }
+}

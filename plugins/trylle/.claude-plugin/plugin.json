@@ -1,0 +1,12 @@
+{
+  "name": "trylle",
+  "version": "0.1.0",
+  "description": "Operate Trylle repositories and developer workflows with the try CLI.",
+  "author": {
+    "name": "Trylle"
+  },
+  "homepage": "https://trylle.com/trylle/trylle-skills",
+  "repository": "https://trylle.com/trylle/trylle-skills",
+  "license": "MIT",
+  "keywords": ["trylle", "git", "pull-requests", "issues", "ci"]
+}

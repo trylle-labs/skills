@@ -1,0 +1,17 @@
+{
+  "name": "trylle",
+  "owner": {
+    "name": "Trylle"
+  },
+  "metadata": {
+    "description": "Official Trylle plugins for coding agents",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "trylle",
+      "source": "plugins/trylle",
+      "description": "Operate Trylle repositories and developer workflows with the try CLI."
+    }
+  ]
+}

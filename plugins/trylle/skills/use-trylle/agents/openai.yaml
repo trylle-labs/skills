@@ -1,0 +1,4 @@
+interface:
+  display_name: "Use Trylle"
+  short_description: "Manage Trylle repositories with the try CLI"
+  default_prompt: "Use $use-trylle to inspect and manage this repository on Trylle with the try CLI."
