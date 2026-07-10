@@ -1,12 +1,13 @@
 {
   "name": "trylle",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle.",
   "author": {
     "name": "Trylle"
   },
-  "homepage": "https://trylle.com/trylle/trylle-skills",
-  "repository": "https://trylle.com/trylle/trylle-skills",
+  "homepage": "https://trylle.com/trylle/skills",
+  "repository": "https://trylle.com/trylle/skills",
   "license": "MIT",
-  "keywords": ["trylle", "git", "pull-requests", "issues", "ci"]
+  "keywords": ["trylle", "git", "pull-requests", "issues", "ci"],
+  "skills": "./skills/"
 }

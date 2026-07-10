@@ -1,9 +1,9 @@
 ---
-name: use-trylle
+name: tylle-cli
 description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI, actions secrets or variables, organizations, profiles, SSH keys, automations, or bots; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
 ---
 
-# Use Trylle
+# Trylle CLI
 
 Use `try` as the primary interface for Trylle platform operations. Use `git` for local version-control work, but do not substitute GitHub-specific tooling for Trylle resources.
 
