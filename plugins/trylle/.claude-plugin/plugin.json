@@ -1,6 +1,6 @@
 {
   "name": "trylle",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Operate Trylle repositories and developer workflows with the try CLI.",
   "author": {
     "name": "Trylle"

@@ -2,6 +2,7 @@
 
 import json
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -23,6 +24,12 @@ def require(condition: bool, message: str):
         raise AssertionError(message)
 
 
+def png_size(path: Path):
+    header = path.read_bytes()[:24]
+    require(header[:8] == b"\x89PNG\r\n\x1a\n", f"{path.relative_to(ROOT)} is not a PNG")
+    return struct.unpack(">II", header[16:24])
+
+
 def main() -> int:
     placeholder = "[" + "TO" + "DO:"
     codex = load_json(PLUGIN / ".codex-plugin" / "plugin.json")
@@ -35,13 +42,18 @@ def main() -> int:
     names = {codex["name"], cursor["name"], claude["name"]}
     require(names == {"trylle"}, f"plugin names disagree: {sorted(names)}")
     versions = {codex["version"], cursor["version"], claude["version"]}
-    require(versions == {"0.1.2"}, f"plugin versions disagree: {sorted(versions)}")
+    require(versions == {"0.1.3"}, f"plugin versions disagree: {sorted(versions)}")
     require(codex.get("skills") == "./skills/", "Codex must load ./skills/")
     require(cursor.get("skills") == "./skills/", "Cursor must load ./skills/")
-    require(codex["interface"].get("composerIcon") == "./assets/trylle-plugin.png", "invalid Codex composer icon")
-    require(codex["interface"].get("logo") == "./assets/trylle-plugin.png", "invalid Codex logo")
-    require(cursor.get("logo") == "assets/trylle-plugin.png", "invalid Cursor logo")
-    require((PLUGIN / "assets" / "trylle-plugin.png").is_file(), "plugin logo asset is missing")
+    require(codex["interface"].get("composerIcon") == "./assets/trylle-32.png", "invalid Codex composer icon")
+    require(codex["interface"].get("logo") == "./assets/trylle-512.png", "invalid Codex logo")
+    require(cursor.get("logo") == "assets/trylle-512.png", "invalid Cursor logo")
+    logo = PLUGIN / "assets" / "trylle-512.png"
+    composer_icon = PLUGIN / "assets" / "trylle-32.png"
+    require(logo.is_file(), "plugin logo asset is missing")
+    require(composer_icon.is_file(), "plugin composer icon asset is missing")
+    require(png_size(logo) == (512, 512), "plugin logo must be 512x512")
+    require(png_size(composer_icon) == (32, 32), "plugin composer icon must be 32x32")
     require(codex_market["plugins"][0]["source"]["path"] == "./plugins/trylle", "invalid Codex source")
     require(cursor_market["plugins"][0]["source"] == "plugins/trylle", "invalid Cursor source")
     require(claude_market["plugins"][0]["source"] == "./plugins/trylle", "invalid Claude source")

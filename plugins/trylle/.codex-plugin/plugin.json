@@ -1,6 +1,6 @@
 {
   "name": "trylle",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Operate Trylle repositories and developer workflows with the try CLI.",
   "author": {
     "name": "Trylle",
@@ -28,8 +28,8 @@
       "Write"
     ],
     "websiteURL": "https://trylle.com",
-    "composerIcon": "./assets/trylle-plugin.png",
-    "logo": "./assets/trylle-plugin.png",
+    "composerIcon": "./assets/trylle-32.png",
+    "logo": "./assets/trylle-512.png",
     "defaultPrompt": [
       "Show my current Trylle repository context.",
       "Check the status of this repository's pull request.",
