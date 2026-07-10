@@ -35,9 +35,13 @@ def main() -> int:
     names = {codex["name"], cursor["name"], claude["name"]}
     require(names == {"trylle"}, f"plugin names disagree: {sorted(names)}")
     versions = {codex["version"], cursor["version"], claude["version"]}
-    require(versions == {"0.1.0"}, f"plugin versions disagree: {sorted(versions)}")
+    require(versions == {"0.1.1"}, f"plugin versions disagree: {sorted(versions)}")
     require(codex.get("skills") == "./skills/", "Codex must load ./skills/")
     require(cursor.get("skills") == "./skills/", "Cursor must load ./skills/")
+    require(codex["interface"].get("composerIcon") == "./assets/trylle.png", "invalid Codex composer icon")
+    require(codex["interface"].get("logo") == "./assets/trylle.png", "invalid Codex logo")
+    require(cursor.get("logo") == "assets/trylle.png", "invalid Cursor logo")
+    require((PLUGIN / "assets" / "trylle.png").is_file(), "plugin logo asset is missing")
     require(codex_market["plugins"][0]["source"]["path"] == "./plugins/trylle", "invalid Codex source")
     require(cursor_market["plugins"][0]["source"] == "plugins/trylle", "invalid Cursor source")
     require(claude_market["plugins"][0]["source"] == "./plugins/trylle", "invalid Claude source")
