@@ -6,12 +6,12 @@ The repository keeps the operational workflow in one [Agent Skills](https://agen
 
 ## Included
 
-- `tylle-cli`: manage repositories, pull requests, issues, stacks, CI, actions configuration, organizations, automations, and other Trylle resources with `try`.
+- `trylle-cli`: manage repositories, pull requests, issues, stacks, CI, actions configuration, organizations, automations, and other Trylle resources with `try`.
 - Codex plugin and marketplace metadata.
 - Cursor plugin and multi-plugin marketplace metadata.
 - Claude Code plugin and marketplace metadata.
 
-The canonical portable skill is [`plugins/trylle/skills/tylle-cli/`](plugins/trylle/skills/tylle-cli/). Its `SKILL.md`, references, and optional Codex UI metadata stay together so the directory can be copied or linked into a skills directory without the plugin wrapper.
+The canonical portable skill is [`skills/trylle-cli`](./skills/trylle-cli/). Its `SKILL.md`, references, and optional Codex UI metadata stay together so the directory can be copied or linked into a skills directory without the plugin wrapper.
 
 ## Install the Trylle CLI
 
@@ -34,17 +34,17 @@ Use the direct skill install when you only need the workflow and already have th
 
 ```bash
 mkdir -p ~/.agents/skills
-cp -R plugins/trylle/skills/tylle-cli ~/.agents/skills/
+cp -R skills/trylle-cli ~/.agents/skills/
 ```
 
 Claude Code discovers user skills under `~/.claude/skills/`:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R plugins/trylle/skills/tylle-cli ~/.claude/skills/
+cp -R skills/trylle-cli ~/.claude/skills/
 ```
 
-For a repository-scoped install, use `.agents/skills/` for Codex and Cursor or `.claude/skills/` for Claude Code. Copy the complete `tylle-cli` directory; `SKILL.md` references files relative to that directory.
+For a repository-scoped install, use `.agents/skills/` for Codex and Cursor or `.claude/skills/` for Claude Code. Copy the complete `trylle-cli` directory; `SKILL.md` references files relative to that directory.
 
 ## Install the plugin
 
@@ -82,19 +82,37 @@ claude plugin install trylle@trylle
 ## Repository layout
 
 ```text
-.agents/plugins/marketplace.json        # Codex marketplace
-.cursor-plugin/marketplace.json         # Cursor marketplace
-.claude-plugin/marketplace.json         # Claude Code marketplace
-plugins/trylle/
-├── assets/trylle-512.png      # Codex and Cursor plugin logo
-├── assets/trylle-32.png       # Codex composer icon
-├── .codex-plugin/plugin.json
-├── .cursor-plugin/plugin.json
-├── .claude-plugin/plugin.json
-└── skills/tylle-cli/
-    ├── SKILL.md
-    ├── agents/openai.yaml
-    └── references/
+├── .agents
+│   └── plugins
+│       └── marketplace.json          # Codex et al marketplace
+├── .claude-plugin
+│   └── marketplace.json              # Claude Code marketplace
+├── .cursor-plugin
+│   └── marketplace.json              # Cursor marketplace
+├── LICENSE
+├── README.md
+├── plugins
+│   └── trylle
+│       ├── .claude-plugin
+│       │   └── plugin.json
+│       ├── .codex-plugin
+│       │   └── plugin.json
+│       ├── .cursor-plugin
+│       │   └── plugin.json
+│       ├── assets
+│       │   ├── trylle-32.png         # Codex composer icon
+│       │   └── trylle-512.png        # Codex and Cursor plugin logo
+│       └── skills -> ../../skills    # Symink to the actual skill source
+├── scripts
+│   └── validate.py
+└── skills
+    └── trylle-cli
+        ├── SKILL.md                  # trylle-cli skill source
+        ├── agents
+        │   └── openai.yaml
+        └── references
+            ├── command-catalog.md    # trylle-cli commands mapping
+            └── workflows.md          # trylle-cli example workflows
 ```
 
 All three plugin manifests explicitly load the same `plugins/trylle/skills/` directory. Keep shared behavior in the Agent Skill rather than copying harness-specific instructions.
@@ -108,7 +126,7 @@ python3 scripts/validate.py
 The repository validator checks the portable Agent Skills constraints and the Codex, Cursor, and Claude Code plugin wiring. When the official reference CLI is installed, validate the canonical skill with it too:
 
 ```bash
-skills-ref validate plugins/trylle/skills/tylle-cli
+skills-ref validate skills/trylle-cli
 ```
 
 When the relevant harness is installed, also run its native validator or local loading flow.
