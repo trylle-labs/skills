@@ -48,6 +48,8 @@ For a repository-scoped install, use `.agents/skills/` for Codex and Cursor or `
 
 ## Install the plugin
 
+This repository is the marketplace root for Codex and Claude Code. The installable plugin root is [`plugins/trylle`](./plugins/trylle/), and each marketplace manifest points at that folder.
+
 ### Codex
 
 Add the Git-backed marketplace:
@@ -56,11 +58,17 @@ Add the Git-backed marketplace:
 codex plugin marketplace add https://api.trylle.com/git/trylle/skills.git
 ```
 
-Then open the plugin directory in the ChatGPT desktop app and install `trylle` from the `Trylle` marketplace.
+Then install `trylle` from the `Trylle` marketplace:
+
+```bash
+codex plugin add trylle@trylle
+```
+
+In the ChatGPT desktop app, you can also open **Plugins**, choose the **Trylle** marketplace, and install **trylle** from there. Start a new Codex task after installation so the bundled skill is available in the task context.
 
 ### Cursor
 
-Cursor currently documents local plugin loading and GitHub-backed marketplace submission. For a Trylle-hosted checkout, clone the repository and symlink the plugin into Cursor's local plugin directory:
+Cursor supports local plugin loading from `~/.cursor/plugins/local/<plugin-name>/`. For a Trylle-hosted checkout, clone the repository and symlink the plugin root into Cursor's local plugin directory:
 
 ```bash
 try repo clone trylle/skills trylle-skills
@@ -68,14 +76,28 @@ mkdir -p ~/.cursor/plugins/local
 ln -s "$PWD/trylle-skills/plugins/trylle" ~/.cursor/plugins/local/trylle
 ```
 
-Restart Cursor or run **Developer: Reload Window**.
+Restart Cursor or run **Developer: Reload Window**. The plugin root must be `plugins/trylle`, not the repository root.
 
 ### Claude Code
 
-Claude Code accepts full Git URLs for marketplaces hosted outside GitHub:
+Claude Code installs plugins from marketplaces. Add this repository as a marketplace, then install the `trylle` plugin from the `trylle` marketplace:
 
 ```bash
 claude plugin marketplace add https://api.trylle.com/git/trylle/skills.git
+claude plugin install trylle@trylle
+```
+
+Inside an existing Claude Code session, reload plugins before invoking the skill:
+
+```text
+/reload-plugins
+/trylle:trylle-cli
+```
+
+For local testing from a checkout, add the checkout directory instead of the Git URL:
+
+```bash
+claude plugin marketplace add /path/to/skills
 claude plugin install trylle@trylle
 ```
 
@@ -100,7 +122,7 @@ claude plugin install trylle@trylle
 │       ├── .cursor-plugin
 │       │   └── plugin.json
 │       ├── assets
-│       │   ├── trylle-32.png         # Codex composer icon
+│       │   ├── trylle-48.png         # Codex composer icon
 │       │   └── trylle-512.png        # Codex and Cursor plugin logo
 │       └── skills -> ../../skills    # Symink to the actual skill source
 ├── scripts

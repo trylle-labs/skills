@@ -102,15 +102,15 @@ def main() -> int:
     require(codex.get("skills") == "./skills/", "Codex must load ./skills/")
     require(cursor.get("skills") == "./skills/", "Cursor must load ./skills/")
     require(claude.get("skills") == "./skills/", "Claude must load ./skills/")
-    require(codex["interface"].get("composerIcon") == "./assets/trylle-32.png", "invalid Codex composer icon")
+    require(codex["interface"].get("composerIcon") == "./assets/trylle-48.png", "invalid Codex composer icon")
     require(codex["interface"].get("logo") == "./assets/trylle-512.png", "invalid Codex logo")
     require(cursor.get("logo") == "assets/trylle-512.png", "invalid Cursor logo")
     logo = PLUGIN / "assets" / "trylle-512.png"
-    composer_icon = PLUGIN / "assets" / "trylle-32.png"
+    composer_icon = PLUGIN / "assets" / "trylle-48.png"
     require(logo.is_file(), "plugin logo asset is missing")
     require(composer_icon.is_file(), "plugin composer icon asset is missing")
     require(png_size(logo) == (512, 512), "plugin logo must be 512x512")
-    require(png_size(composer_icon) == (32, 32), "plugin composer icon must be 32x32")
+    require(png_size(composer_icon) == (48, 48), "plugin composer icon must be 48x48")
     require(codex_market["plugins"][0]["source"]["path"] == "./plugins/trylle", "invalid Codex source")
     require(cursor_market["plugins"][0]["source"] == "plugins/trylle", "invalid Cursor source")
     require(claude_market["plugins"][0]["source"] == "./plugins/trylle", "invalid Claude source")
