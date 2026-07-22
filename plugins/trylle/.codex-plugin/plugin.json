@@ -28,7 +28,7 @@
       "Write"
     ],
     "websiteURL": "https://trylle.com",
-    "composerIcon": "./assets/trylle-32.png",
+    "composerIcon": "./assets/trylle-48.png",
     "logo": "./assets/trylle-512.png",
     "defaultPrompt": [
       "Show my current Trylle repository context.",
