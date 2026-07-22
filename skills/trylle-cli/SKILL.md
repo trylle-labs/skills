@@ -69,6 +69,23 @@ Read [references/command-catalog.md](references/command-catalog.md) for the comp
 - Do not guess unsupported flags. The installed CLI's `--help` output is the source of truth.
 - Do not use `try api` when a first-class command exists. For raw calls, use only the public `/v1` API path needed for the task.
 
+## Installing or update the skill
+
+If some of the skill files are missing or CLI reference map is outdated, use commands to update the skill:
+
+```
+# add
+npx skills add trylle-labs/skills
+
+# update
+npx skills update trylle-labs/skills --skill trylle-cli
+```
+
+Or even using `uv`:
+```
+uvx upd-skill -g trylle-labs/trylle-cli
+```
+
 ## Current CLI gotchas
 
 - Repository inference depends on a recognizable git remote. Pass `-R OWNER/NAME` explicitly when inference is ambiguous.

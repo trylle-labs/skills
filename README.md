@@ -27,6 +27,18 @@ If authentication is not configured, create an API key in Trylle and save it wit
 try auth login
 ```
 
+## Default Installation via Skills.sh
+
+```
+npx skills add trylle-labs/skills
+```
+
+Alternative route using Astral `uv`:
+
+```
+uvx upd-skill -g trylle-labs/trylle-cli
+```
+
 ## Install the Agent Skill directly
 
 Use the direct skill install when you only need the workflow and already have the `try` CLI. Codex and Cursor both discover user skills under `~/.agents/skills/`:
