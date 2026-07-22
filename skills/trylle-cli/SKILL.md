@@ -1,24 +1,54 @@
 ---
 name: trylle-cli
 description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI, actions secrets or variables, organizations, profiles, SSH keys, automations, or bots; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
+license: Apache-2.0
+metadata:
+  author: Trylle
+  version: "1.1.3"
 ---
 
-# Trylle CLI
+# Trylle CLI, Skill Guide
+
+## Overview
 
 Use `try` as the primary interface for Trylle platform operations. Use `git` for local version-control work, but do not substitute GitHub-specific tooling for Trylle resources.
 
-## Core workflow
+By invoking any script in this skill, you agree to the Terms of Use in `TERMS_OF_USE`.
 
-1. Confirm the CLI is available with `try --version`. If it is missing, install it with `brew install trylle/trylle-cli/try` when the user authorizes installation.
-2. Check authentication with `try auth status --json`. Never run `try auth token --show` or print bot tokens unless the user explicitly requests the secret material and the environment can handle it safely.
-3. Resolve context with `try repo context --json` inside a checkout. Outside a checkout, pass `-R OWNER/NAME` to commands that support it or pass `OWNER/NAME` positionally to `try repo view`, `clone`, and similar repository commands.
-4. Inspect the current state with a read command. Prefer `--json` for agent reasoning and automation.
-5. Before a write, run `try <group> <command> --help`, validate identifiers and the intended scope, then execute only the requested mutation.
-6. Re-read the affected resource. Return a web URL with `try browse repo|pr|issue` when it helps the user continue.
+## Workflow
+
+## 1. Locate or install the binary
+
+Use a local `trylle-cli` or `try` binary if possible. If it is not on PATH,
+
+```bash
+npm i -g @trylle/trylle-cli
+```
+
+One-time commands can be run via `npx trylle-cli`, example: `npx trylle-cli version`.
+The rest of documentation will use `try` as a reference.
+
+Other ways to get the binary:
+```
+# Python Way
+uv tool install trylle-cli
+
+# Rust Way (slow and will build from source)
+cargo install trylle-cli
+```
+
+## 2. Core usage
+
+Important: CLI is tailored for humans to use, so you should add `--json` flag for agentic usage of commands.
+
+1. Check authentication with `try auth status --json`. Never run `try auth token --show` or print bot tokens unless the user explicitly requests the secret material and the environment can handle it safely.
+2. Resolve context with `try repo context --json` inside a checkout. Outside a checkout, pass `-R OWNER/NAME` to commands that support it or pass `OWNER/NAME` positionally to `try repo view`, `clone`, and similar repository commands.
+3. Before a write, run `try <group> <command> --help`, validate identifiers and the intended scope, then execute only the requested mutation.
+4. Re-read the affected resource. Return a web URL with `try browse repo|pr|issue` when it helps the user continue.
 
 ## Route the task
 
-- Repositories and daily context: use `try status` and `try repo`.
+- Repositories and daily context: use `try status` for current user's summary and `try repo`.
 - Pull requests and reviews: use `try pr`.
 - Issue triage: use `try issue`.
 - Dependent branches and pull requests: use `try stack`.

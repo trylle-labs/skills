@@ -6,6 +6,14 @@ import struct
 import sys
 from pathlib import Path
 
+try:
+    import yaml
+except ImportError as error:
+    raise SystemExit(
+        "validation error: PyYAML is required; install it with "
+        "`python3 -m pip install PyYAML`"
+    ) from error
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PLUGIN = ROOT / "plugins" / "trylle"
@@ -13,6 +21,15 @@ SKILLS = PLUGIN / "skills"
 SKILL_NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 SEMVER_PATTERN = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 LOCAL_LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+FRONTMATTER_PATTERN = re.compile(r"^---\r?\n(.*?)\r?\n---\r?\n(.*)$", re.DOTALL)
+SPEC_FRONTMATTER_FIELDS = {
+    "name",
+    "description",
+    "license",
+    "compatibility",
+    "metadata",
+    "allowed-tools",
+}
 
 
 def load_json(path: Path):
@@ -33,34 +50,73 @@ def png_size(path: Path):
     return struct.unpack(">II", header[16:24])
 
 
-def parse_portable_frontmatter(path: Path):
+def parse_agent_skills_frontmatter(path: Path):
     text = path.read_text()
-    match = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.DOTALL)
+    match = FRONTMATTER_PATTERN.match(text)
     require(match is not None, f"{path.relative_to(ROOT)} has invalid frontmatter")
 
-    fields = {}
-    for line in match.group(1).splitlines():
-        require(":" in line, f"{path.relative_to(ROOT)} has invalid frontmatter line: {line!r}")
-        key, value = line.split(":", 1)
-        require(key not in fields, f"{path.relative_to(ROOT)} repeats frontmatter field {key!r}")
-        fields[key] = value.strip()
+    try:
+        fields = yaml.safe_load(match.group(1))
+    except yaml.YAMLError as error:
+        raise AssertionError(f"{path.relative_to(ROOT)} has invalid YAML frontmatter: {error}") from error
 
-    # Keep shared skills on the portable intersection supported by every target.
-    require(list(fields) == ["name", "description"], f"{path.relative_to(ROOT)} must contain only name and description frontmatter")
+    require(isinstance(fields, dict), f"{path.relative_to(ROOT)} frontmatter must be a YAML mapping")
+    require(
+        all(isinstance(key, str) for key in fields),
+        f"{path.relative_to(ROOT)} frontmatter field names must be strings",
+    )
+    unsupported = sorted(set(fields) - SPEC_FRONTMATTER_FIELDS)
+    require(
+        not unsupported,
+        f"{path.relative_to(ROOT)} has unsupported Agent Skills frontmatter field(s): {', '.join(unsupported)}",
+    )
+    missing = sorted({"name", "description"} - set(fields))
+    require(
+        not missing,
+        f"{path.relative_to(ROOT)} is missing required frontmatter field(s): {', '.join(missing)}",
+    )
+
     return text, fields, match.group(2)
 
 
 def validate_agent_skill(skill: Path):
     skill_file = skill / "SKILL.md"
     require(skill_file.is_file(), f"{skill.relative_to(ROOT)} is missing SKILL.md")
-    text, fields, body = parse_portable_frontmatter(skill_file)
+    text, fields, body = parse_agent_skills_frontmatter(skill_file)
 
     name = fields["name"]
     description = fields["description"]
+    require(isinstance(name, str), f"{skill_file.relative_to(ROOT)} name must be a string")
+    require(isinstance(description, str), f"{skill_file.relative_to(ROOT)} description must be a string")
     require(1 <= len(name) <= 64, f"{skill_file.relative_to(ROOT)} name must be 1-64 characters")
     require(SKILL_NAME_PATTERN.fullmatch(name) is not None, f"{skill_file.relative_to(ROOT)} has an invalid skill name")
     require(name == skill.name, f"{skill_file.relative_to(ROOT)} name must match its parent directory")
     require(1 <= len(description) <= 1024, f"{skill_file.relative_to(ROOT)} description must be 1-1024 characters")
+    if "license" in fields:
+        license_value = fields["license"]
+        require(
+            isinstance(license_value, str) and license_value.strip(),
+            f"{skill_file.relative_to(ROOT)} license must be a non-empty string",
+        )
+    if "compatibility" in fields:
+        compatibility = fields["compatibility"]
+        require(
+            isinstance(compatibility, str) and 1 <= len(compatibility) <= 500,
+            f"{skill_file.relative_to(ROOT)} compatibility must be a 1-500 character string",
+        )
+    if "metadata" in fields:
+        metadata = fields["metadata"]
+        require(isinstance(metadata, dict), f"{skill_file.relative_to(ROOT)} metadata must be a mapping")
+        require(
+            all(isinstance(key, str) and isinstance(value, str) for key, value in metadata.items()),
+            f"{skill_file.relative_to(ROOT)} metadata keys and values must be strings",
+        )
+    if "allowed-tools" in fields:
+        allowed_tools = fields["allowed-tools"]
+        require(
+            isinstance(allowed_tools, str) and allowed_tools.strip(),
+            f"{skill_file.relative_to(ROOT)} allowed-tools must be a non-empty space-separated string",
+        )
     require(body.strip(), f"{skill_file.relative_to(ROOT)} must contain Markdown instructions")
     require(len(text.splitlines()) <= 500, f"{skill_file.relative_to(ROOT)} should stay under 500 lines")
 
@@ -125,7 +181,7 @@ def main() -> int:
         require(f"${skill_name}" in openai_yaml, f"{skill_name} default prompt must mention ${skill_name}")
 
     for path in ROOT.rglob("*"):
-        if path.is_file() and ".git" not in path.parts:
+        if path.is_file() and ".git" not in path.parts and "__pycache__" not in path.parts:
             require(placeholder not in path.read_text(errors="ignore"), f"{path.relative_to(ROOT)} contains a placeholder")
 
     print(f"Validated {len(skill_dirs)} Agent Skill and Codex, Cursor, and Claude Code plugin metadata at version {version}.")

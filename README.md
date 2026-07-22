@@ -16,16 +16,15 @@ The canonical portable skill is [`skills/trylle-cli`](./skills/trylle-cli/). Its
 ## Install the Trylle CLI
 
 ```bash
-brew install trylle/trylle-cli/try
-try auth status --json
+npm i -g @trylle/trylle-cli
+
+try auth status
 ```
 
 If authentication is not configured, create an API key in Trylle and save it without placing the key directly in shell history:
 
 ```bash
-export TRYLLE_API_KEY="..."
-try auth login --json
-unset TRYLLE_API_KEY
+try auth login
 ```
 
 ## Install the Agent Skill directly
@@ -55,7 +54,7 @@ This repository is the marketplace root for Codex and Claude Code. The installab
 Add the Git-backed marketplace:
 
 ```bash
-codex plugin marketplace add https://api.trylle.com/git/trylle/skills.git
+codex plugin marketplace add https://trylle.com/trylle/skills.git
 ```
 
 Then install `trylle` from the `Trylle` marketplace:
@@ -83,7 +82,7 @@ Restart Cursor or run **Developer: Reload Window**. The plugin root must be `plu
 Claude Code installs plugins from marketplaces. Add this repository as a marketplace, then install the `trylle` plugin from the `trylle` marketplace:
 
 ```bash
-claude plugin marketplace add https://api.trylle.com/git/trylle/skills.git
+claude plugin marketplace add https://trylle.com/trylle/skills.git
 claude plugin install trylle@trylle
 ```
 
