@@ -145,6 +145,7 @@ claude plugin install trylle@trylle
         │   └── openai.yaml
         └── references
             ├── command-catalog.md    # trylle-cli commands mapping
+            ├── inline-reviews.md      # automation workflow for inline PR reviews
             └── workflows.md          # trylle-cli example workflows
 ```
 
