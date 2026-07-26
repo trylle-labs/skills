@@ -4,7 +4,7 @@ description: Operate the Trylle git platform with the official `try` CLI. Use wh
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.1.3"
+  version: "1.1.4"
 ---
 
 # Trylle CLI, Skill Guide
@@ -58,7 +58,7 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Resource links and uncovered public endpoints: use `try browse` or `try api`.
 - Local AI and review helpers: use `try ai`, `try explain`, `try draft`, or `try diff`.
 
-Read [references/command-catalog.md](references/command-catalog.md) for the complete command map and exact argument patterns. Read [references/workflows.md](references/workflows.md) when creating or publishing a repository, opening or reviewing a pull request, triaging issues, handling stacks, diagnosing CI, or changing secrets and settings.
+Read [references/command-catalog.md](references/command-catalog.md) for the complete command map and exact argument patterns. Read [references/workflows.md](references/workflows.md) when creating or publishing a repository, opening or reviewing a pull request, triaging issues, handling stacks, diagnosing CI, or changing secrets and settings. Read [references/inline-reviews.md](references/inline-reviews.md) before an automation submits or manages inline pull request review comments.
 
 ## Safety and output rules
 
@@ -91,6 +91,7 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - Repository inference depends on a recognizable git remote. Pass `-R OWNER/NAME` explicitly when inference is ambiguous.
 - `try pr current --json` exits nonzero when the current branch has no open PR instead of returning JSON `null`. Use `try repo context --json` when absence is an expected state.
 - `try pr review` requires exactly one of `--approve`, `--request-changes`, or `--comment`.
+- `try pr review` also requires `--commit-id` when `--comments` or `--comments-file` submits inline comments.
 - `try issue label --set` replaces the complete label set; `--add` and `--remove` preserve unrelated labels.
 - `try stack submit` pushes the current branch to `origin` before creating the pull request.
 - On CLI version 1.0.0, `try ci logs --follow` and `try ci watch` return the current log payload rather than continuously polling. Re-run a read command when fresh state is required.

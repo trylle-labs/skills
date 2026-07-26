@@ -120,6 +120,8 @@ Use `--draft`, repeated `--label`, `--assignee`, and `--reviewer` flags only whe
    ```
 
    Replace `--approve` with `--request-changes` or `--comment` when appropriate.
+   For comments anchored to changed lines, follow
+   [inline-reviews.md](inline-reviews.md) and include the PR head commit SHA.
 
 3. Before merging, re-run status and confirm the method and branch-deletion choice. Then execute only when authorized:
 
