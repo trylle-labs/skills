@@ -4,7 +4,7 @@ description: Operate the Trylle git platform with the official `try` CLI. Use wh
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.1.4"
+  version: "1.1.5"
 ---
 
 # Trylle CLI, Skill Guide
