@@ -190,13 +190,25 @@ try stack sync --pull PARENT_NUMBER --json
    try ci logs RUN_ID
    ```
 
-3. Re-read the run for fresh state. On CLI 1.0.0, `watch` and `logs --follow` do not continuously poll.
+3. Wait for a run to finish. `watch` polls until the workflow run or job ends; `--exit-status` exits non-zero unless it succeeded, and `--json` prints only the final run:
 
-4. Cancel only after confirming the run is active and the user intended cancellation:
+   ```bash
+   try ci watch RUN_ID --exit-status
+   ```
+
+4. Re-run a finished run as a new run (the old run is not modified), optionally watching it. The platform rebuilds the run from its stored request; secrets are resolved afresh:
+
+   ```bash
+   try ci restart RUN_ID --watch
+   ```
+
+5. Cancel only after confirming the run is active and the user intended cancellation:
 
    ```bash
    try ci cancel RUN_ID --json
    ```
+
+Run IDs accept either a workflow run (`try ci runs`) or a single job (`try ci list`). Logs are per job: use the job ID that `watch` prints.
 
 ## Manage variables and secrets
 
@@ -240,3 +252,30 @@ Re-list metadata to verify. Use `try org secret ORG ...` or `try actions secret 
    ```
 
 5. Re-read the affected resource with a first-class command or a GET request.
+
+## Attach screenshots and videos
+
+`--attach FILE[#ALT TEXT]` works like gh's: repeat it for several files (up to 50). Supported: png, jpg, jpeg, gif, webp, svg (up to 5 MiB) and mp4, mov, webm (up to 100 MiB).
+
+```bash
+try issue create -R OWNER/NAME --title "Login fails" --body-file body.md --attach './login.png#The login error state'
+try pr comment 12 --attach ./before.png --attach ./after.png
+try pr review 12 --comment --body "See inline" --commit-id SHA --comments-file comments.json --attach ./shot.png
+```
+
+A body that references an attached file, such as `![alt](./login.png)`, has that reference rewritten; other files are appended. `issue create`/`pr create` create the item first and then write the final body, so on a partial upload failure the item exists and the command exits non-zero with its URL. Uploads work with a CLI key, or with a run-scoped bot token that holds an issue or pull request writing scope (`issues:comment`, `pulls:comment`, or broader).
+
+## Run coding agents with Magic Sessions and Tasks
+
+```bash
+try task create -R OWNER/NAME -p "Fix the flaky login test" --json   # waits until an agent starts
+try task send SESSION_ID AGENT_ID -p "Also update the changelog" --json
+try session list --json
+try session logs SESSION_ID          # prompts, replies, tool calls so far
+try session logs SESSION_ID --follow # keep streaming live activity (Ctrl-C to stop)
+try session logs SESSION_ID --json   # one decoded record per line, for scripts
+try session diff SESSION_ID          # saved diff once the session pauses
+try session pause SESSION_ID --json
+```
+
+`task create` reuses a compatible running session or starts one and waits until an agent picks the task up; it does not wait for the agent to finish, so follow progress with `session logs --follow` (`--task AGENT_ID` narrows it to one agent, `--stream control` shows session lifecycle instead). Session `delete` is permanent and needs `--yes`; `pause --force` may lose unsaved work. `session ssh` and `session desktop` grant interactive access, so run them only when the user asks.

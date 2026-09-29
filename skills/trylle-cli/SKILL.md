@@ -1,10 +1,10 @@
 ---
 name: trylle-cli
-description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI, actions secrets or variables, organizations, profiles, SSH keys, automations, or bots; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
+description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI runs (watch, restart, cancel), actions secrets or variables, organizations, profiles, SSH keys, automations, bots, or Magic Sessions and Magic Tasks (cloud coding agents); attach screenshots or videos to issues, PRs, comments, and reviews; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.1.5"
+  version: "1.2.0"
 ---
 
 # Trylle CLI, Skill Guide
@@ -41,7 +41,7 @@ cargo install trylle-cli
 
 Important: CLI is tailored for humans to use, so you should add `--json` flag for agentic usage of commands.
 
-1. Check authentication with `try auth status --json`. Never run `try auth token --show` or print bot tokens unless the user explicitly requests the secret material and the environment can handle it safely.
+1. Check authentication with `try auth status --json`. Its `kind` is `cli_key` for a person's key or `bot_token` for a run-scoped token (automation run, CI job, Magic Task, or Magic Session), and `botToken` then shows the token's scopes, repositories, and expiry. Never run `try auth token --show` or print tokens unless the user explicitly requests the secret material and the environment can handle it safely.
 2. Resolve context with `try repo context --json` inside a checkout. Outside a checkout, pass `-R OWNER/NAME` to commands that support it or pass `OWNER/NAME` positionally to `try repo view`, `clone`, and similar repository commands.
 3. Before a write, run `try <group> <command> --help`, validate identifiers and the intended scope, then execute only the requested mutation.
 4. Re-read the affected resource. Return a web URL with `try browse repo|pr|issue` when it helps the user continue.
@@ -52,19 +52,20 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Pull requests and reviews: use `try pr`.
 - Issue triage: use `try issue`.
 - Dependent branches and pull requests: use `try stack`.
-- CI status and logs: use `try ci`.
+- CI status, logs, watching, and re-runs: use `try ci`.
+- Cloud coding agents: use `try task` to start or follow up agents and `try session` for their workspaces.
 - Repository or organization configuration: use `try actions` or `try org`.
 - Accounts and operations: use `try profile`, `try ssh-key`, `try automation`, or `try bot`.
-- Resource links and uncovered public endpoints: use `try browse` or `try api`.
+- Resource links and uncovered public endpoints: use `try browse` or `try api` (`try api --list [FILTER] --json` lists every public endpoint with its parameters).
 - Local AI and review helpers: use `try ai`, `try explain`, `try draft`, or `try diff`.
 
 Read [references/command-catalog.md](references/command-catalog.md) for the complete command map and exact argument patterns. Read [references/workflows.md](references/workflows.md) when creating or publishing a repository, opening or reviewing a pull request, triaging issues, handling stacks, diagnosing CI, or changing secrets and settings. Read [references/inline-reviews.md](references/inline-reviews.md) before an automation submits or manages inline pull request review comments.
 
 ## Safety and output rules
 
-- Treat repository deletion, PR merging or closing, issue closing, label replacement, key deletion, automation toggles, token minting, and secret changes as consequential operations. Show the exact target and inspect current state first.
+- Treat repository deletion, PR merging or closing, issue closing, label replacement, key deletion, automation toggles, bot installations, repository renames or transfers, Magic Session deletion or force-pause, and secret changes as consequential operations. Show the exact target and inspect current state first.
 - Keep credentials out of command literals, logs, files, commit messages, and chat. Use pre-existing environment variables for secret values and unset temporary variables afterward.
-- Prefer `--body-file` to complex inline PR, review, issue, or comment bodies.
+- Prefer `--body-file` to complex inline PR, review, issue, or comment bodies. Attach screenshots with `--attach FILE[#ALT]` (see workflows).
 - Use `--json` whenever available. Human output is intended for terminal reading and may change formatting.
 - Do not guess unsupported flags. The installed CLI's `--help` output is the source of truth.
 - Do not use `try api` when a first-class command exists. For raw calls, use only the public `/v1` API path needed for the task.
@@ -94,5 +95,8 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - `try pr review` also requires `--commit-id` when `--comments` or `--comments-file` submits inline comments.
 - `try issue label --set` replaces the complete label set; `--add` and `--remove` preserve unrelated labels.
 - `try stack submit` pushes the current branch to `origin` before creating the pull request.
-- On CLI version 1.0.0, `try ci logs --follow` and `try ci watch` return the current log payload rather than continuously polling. Re-run a read command when fresh state is required.
+- `try ci watch` polls until the run finishes. CLI 1.1.6 and earlier returned a single log snapshot instead.
+- `try repo delete` and `try repo transfer` require `--yes` when not interactive, and `try session delete` does too.
+- Bot tokens cannot be minted or listed from the CLI: the platform injects a run-scoped `TRYLLE_BOT_TOKEN`. Bot management (`try bot ...`) requires a person's CLI key, and only a bot's creator can `try bot edit` it; `--attach` uploads also work with a bot token that has a comment or write scope.
+- `try session logs` reads session history, not a live shell; use `try session ssh` for a shell. Output is chronological and complete from the start of the session.
 - List filters such as PR author and issue labels may be applied to the returned page. Increase the page size or paginate before concluding that no matching item exists.
