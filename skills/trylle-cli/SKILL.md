@@ -54,6 +54,7 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Dependent branches and pull requests: use `try stack`.
 - CI status, logs, watching, and re-runs: use `try ci`.
 - Cloud coding agents: use `try task` to start or follow up agents and `try session` for their workspaces.
+- The Trylle app around the session you run in (local or cloud): use `try app`. `try app open changes|files|terminal|pr` shows a tab of the session's panel, `try app open --pr <number|url|OWNER/NAME#N>` shows a pull request there, and `try app pr attach|detach|list` tracks pull requests with the session. A PR you create with `try pr create` inside a session is attached already. Show the reader something when it helps them follow the work, not after every step.
 - Repository or organization configuration: use `try actions` or `try org`.
 - Accounts and operations: use `try profile`, `try ssh-key`, `try automation`, or `try bot`.
 - Resource links and uncovered public endpoints: use `try browse` or `try api` (`try api --list [FILTER] --json` lists every public endpoint with its parameters).
@@ -99,4 +100,5 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - `try repo delete` and `try repo transfer` require `--yes` when not interactive, and `try session delete` does too.
 - Bot tokens cannot be minted or listed from the CLI: the platform injects a run-scoped `TRYLLE_BOT_TOKEN`. Bot management (`try bot ...`) requires a person's CLI key, and only a bot's creator can `try bot edit` it; `--attach` uploads also work with a bot token that has a comment or write scope.
 - `try session logs` reads session history, not a live shell; use `try session ssh` for a shell. Output is chronological and complete from the start of the session.
+- `try app` works only inside a Trylle session (it reads `TRYLLE_SESSION_ID` and `TRYLLE_DESKTOP_ENDPOINT`); elsewhere it says there is no session to act on. A panel request shows at once when the reader is on that session and otherwise waits until they open it. A cloud session tracks Trylle pull requests only.
 - List filters such as PR author and issue labels may be applied to the returned page. Increase the page size or paginate before concluding that no matching item exists.
