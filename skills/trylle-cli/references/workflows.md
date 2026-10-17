@@ -279,3 +279,28 @@ try session pause SESSION_ID --json
 ```
 
 `task create` reuses a compatible running session or starts one and waits until an agent picks the task up; it does not wait for the agent to finish, so follow progress with `session logs --follow` (`--task AGENT_ID` narrows it to one agent, `--stream control` shows session lifecycle instead). Session `delete` is permanent and needs `--yes`; `pause --force` may lose unsaved work. `session ssh` and `session desktop` grant interactive access, so run them only when the user asks.
+
+## Coordinate a project
+
+A project's orchestrator turns the brief into tracker items, starts workers on them, and keeps the feed current. With a project id `P`:
+
+```bash
+try project view P --json            # brief, attached repositories (re-read before code work), tallies
+try project resource list P          # shared library; resource view P ID -o PATH saves a file
+try project item list P              # tracker by column; --status todo narrows it; --json for scripts
+try project feed P --limit 20        # newest first, with event ids; --before ID pages back, --all reads everything
+try project capabilities P           # providers and models workers may use, and the project default
+try project item create P -R OWNER/NAME --title "..." --body-file issue.md   # files a real issue
+try project item adopt P 42 -R OWNER/NAME            # track an existing issue
+try project item move P '#42' todo                   # backlog, todo, in-progress, in-review, done, canceled
+try project item start P '#42' --provider codex --model MODEL   # worker implements it and opens a PR
+try project post P -m "Plan: ..."                    # note for the humans
+try project feed P --wait --timeout 30m              # block until someone reacts, then read what arrived
+```
+
+Write issue bodies with enough context that a worker can implement them without asking. Repositories can be attached after the project starts; clone a newly attached one with `try clone OWNER/NAME`. A provider other than the project default needs `--model`; pick it from `try project capabilities P`. A worker links its pull request and reports back with:
+
+```bash
+try project item attach-pr P ITEM_ID PR       # PR as a number, OWNER/NAME#N, or URL; moves the item to in_review; the first PR wins
+try project post P -m "Done: ..." --item ITEM_ID --as-worker
+```
