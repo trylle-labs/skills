@@ -1,6 +1,6 @@
 ---
 name: trylle-cli
-description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI runs (watch, restart, cancel), actions secrets or variables, organizations, profiles, SSH keys, automations, bots, or Magic Sessions and Magic Tasks (cloud coding agents); attach screenshots or videos to issues, PRs, comments, and reviews; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
+description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI runs (watch, restart, cancel), actions secrets or variables, organizations, profiles, SSH keys, automations, bots, projects (tracker items, workers, activity feed, library), or Magic Sessions and Magic Tasks (cloud coding agents); attach screenshots or videos to issues, PRs, comments, and reviews; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
 license: Apache-2.0
 metadata:
   author: Trylle
@@ -54,6 +54,7 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Dependent branches and pull requests: use `try stack`.
 - CI status, logs, watching, and re-runs: use `try ci`.
 - Cloud coding agents: use `try task` to start or follow up agents and `try session` for their workspaces.
+- Projects (a goal, its repositories, a tracker of issues, an activity feed, and a library of files and links): use `try project`. Orchestrators and workers inside a project session use it in place of raw `curl` calls to `/v1/projects/...`.
 - The Trylle app around the session you run in (local or cloud): use `try app`. `try app open changes|files|terminal|pr` shows a tab of the session's panel, `try app open --pr <number|url|OWNER/NAME#N>` shows a pull request there, and `try app pr attach|detach|list` tracks pull requests with the session. A PR you create with `try pr create` inside a session is attached already. Show the reader something when it helps them follow the work, not after every step.
 - Repository or organization configuration: use `try actions` or `try org`.
 - Accounts and operations: use `try profile`, `try ssh-key`, `try automation`, or `try bot`.
@@ -101,4 +102,5 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - Bot tokens cannot be minted or listed from the CLI: the platform injects a run-scoped `TRYLLE_BOT_TOKEN`. Bot management (`try bot ...`) requires a person's CLI key, and only a bot's creator can `try bot edit` it; `--attach` uploads also work with a bot token that has a comment or write scope.
 - `try session logs` reads session history, not a live shell; use `try session ssh` for a shell. Output is chronological and complete from the start of the session.
 - `try app` works only inside a Trylle session (it reads `TRYLLE_SESSION_ID` and `TRYLLE_DESKTOP_ENDPOINT`); elsewhere it says there is no session to act on. A panel request shows at once when the reader is on that session and otherwise waits until they open it. A cloud session tracks Trylle pull requests only.
+- `try project` takes a project id or exact name, and items by id or by the issue they track (`N`, `#N`, or `OWNER/NAME#N`). `item create` files a real issue; `item start` launches a worker agent in the project session. `-R` defaults to the project's only repository. `try project delete` requires `--yes` when not interactive; it leaves issues, pull requests, and the orchestration session in place (archive that with `try session archive`).
 - List filters such as PR author and issue labels may be applied to the returned page. Increase the page size or paginate before concluding that no matching item exists.
