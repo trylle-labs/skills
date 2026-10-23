@@ -1,6 +1,6 @@
 # Trylle Skills
 
-Official Agent Skills and plugins for using the [`try`](https://trylle.com/trylle/trylle-cli) CLI with Trylle.
+Official Agent Skills and plugins for using the [`try`](https://docs.trylle.com/cli) CLI with Trylle.
 
 The repository keeps the operational workflow in one [Agent Skills](https://agentskills.io/specification)-compatible folder and exposes that same folder through harness-specific manifests for Codex, Cursor, and Claude Code.
 
