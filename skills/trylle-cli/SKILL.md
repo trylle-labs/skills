@@ -1,10 +1,10 @@
 ---
 name: trylle-cli
-description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI runs (watch, restart, cancel), actions secrets or variables, organizations, profiles, SSH keys, automations, bots, projects (tracker items, workers, activity feed, library, agent capabilities), or Magic Sessions and Magic Tasks (cloud coding agents); attach screenshots or videos to issues, PRs, comments, and reviews; print Trylle web URLs; call an uncovered public API endpoint; or use Trylle's AI, explain, draft, and diff commands.
+description: Operate the Trylle git platform with the official `try` CLI. Use when an agent needs to authenticate to Trylle; inspect or manage repositories, pull requests, issues, stacked PRs, CI runs (dispatch workflows with inputs, watch, restart, cancel), pull mirrors and GitHub sync (status, sync, confirmed force-pull or force-push), actions secrets or variables, organizations, profiles, SSH keys, automations, bots, projects (tracker items, workers, activity feed, library, agent capabilities), or Magic Sessions and Magic Tasks (cloud coding agents); attach screenshots or videos to issues, PRs, comments, and reviews; print Trylle web URLs; call an uncovered public API endpoint; or use the ask, agent, explain, draft, and diff helpers.
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.2.0"
+  version: "1.3.0"
 ---
 
 # Trylle CLI, Skill Guide
@@ -52,7 +52,8 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Pull requests and reviews: use `try pr`.
 - Issue triage: use `try issue`.
 - Dependent branches and pull requests: use `try stack`.
-- CI status, logs, watching, and re-runs: use `try ci`.
+- CI status, logs, watching, and re-runs: use `try ci`. Start a `workflow_dispatch` run with `try ci dispatch`; without a workflow it lists the dispatchable workflows and the inputs each declares.
+- Pull mirrors and GitHub sync: use `try repo mirror` (`status`, `sync`, `force-pull`, `force-push`).
 - Cloud coding agents: use `try task` to start or follow up agents and `try session` for their workspaces.
 - Projects (a goal, its repositories, a tracker of issues, an activity feed, and a library of files and links): use `try project`, including as a project's orchestrator or worker.
 - Which providers and models agents may run: use `try session capabilities`, or `try project capabilities <project>` for a project's workers.
@@ -60,13 +61,15 @@ Important: CLI is tailored for humans to use, so you should add `--json` flag fo
 - Repository or organization configuration: use `try actions` or `try org`.
 - Accounts and operations: use `try profile`, `try ssh-key`, `try automation`, or `try bot`.
 - Resource links and uncovered public endpoints: use `try browse` or `try api` (`try api --list [FILTER] --json` lists every public endpoint with its parameters).
-- Local AI and review helpers: use `try ai`, `try explain`, `try draft`, or `try diff`.
+- Local AI and review helpers: use `try ask`, `try agent`, `try explain`, `try draft`, or `try diff`.
+- The CLI itself: `try version` checks for and installs updates, and `try skill` installs or updates this skill for local agent CLIs.
 
-Read [references/command-catalog.md](references/command-catalog.md) for the complete command map and exact argument patterns. Read [references/workflows.md](references/workflows.md) when creating or publishing a repository, opening or reviewing a pull request, triaging issues, handling stacks, diagnosing CI, or changing secrets and settings. Read [references/inline-reviews.md](references/inline-reviews.md) before an automation submits or manages inline pull request review comments.
+Read [references/command-catalog.md](references/command-catalog.md) for the complete command map; run a leaf command's `--help` for its exact flags. Read [references/workflows.md](references/workflows.md) when creating or publishing a repository, opening or reviewing a pull request, triaging issues, handling stacks, diagnosing or dispatching CI, forcing a mirror sync, or changing secrets and settings. Read [references/inline-reviews.md](references/inline-reviews.md) before an automation submits or manages inline pull request review comments.
 
 ## Safety and output rules
 
-- Treat repository deletion, PR merging or closing, issue closing, label replacement, key deletion, automation toggles, bot installations, repository renames or transfers, Magic Session deletion or force-pause, and secret changes as consequential operations. Show the exact target and inspect current state first.
+- Treat repository deletion, PR merging or closing, issue closing, label replacement, key deletion, automation toggles, bot installations, repository renames or transfers, workflow dispatches, Magic Session deletion or force-pause, and secret changes as consequential operations. Show the exact target and inspect current state first.
+- `try repo mirror force-pull` and `force-push` overwrite refs and can lose commits. Run the command without `--confirm-destructive` first: it changes nothing and prints the refs it would overwrite. Show that to the user, and add `--confirm-destructive` only after they approve that exact direction. Never switch between force-pull and force-push on your own.
 - Keep credentials out of command literals, logs, files, commit messages, and chat. Use pre-existing environment variables for secret values and unset temporary variables afterward.
 - Prefer `--body-file` to complex inline PR, review, issue, or comment bodies. Attach screenshots with `--attach FILE[#ALT]` (see workflows).
 - Use `--json` whenever available. Human output is intended for terminal reading and may change formatting.
@@ -99,6 +102,8 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - `try issue label --set` replaces the complete label set; `--add` and `--remove` preserve unrelated labels.
 - `try stack submit` pushes the current branch to `origin` before creating the pull request.
 - `try ci watch` polls until the run finishes. CLI 1.1.6 and earlier returned a single log snapshot instead.
+- `try ci dispatch WORKFLOW` takes a path, file name, or display name, inputs as repeated `-f KEY=VALUE`, and `--ref` (a branch or a full `refs/tags/...` ref; defaults to the default branch). It refuses unknown inputs, invalid choices, booleans, and numbers, fills in defaults, and runs at the commit the inputs were read at. In a terminal it prompts for missing required inputs; agents should pass `--json` or `--no-prompt` so it fails and lists them instead.
+- `try repo mirror` handles two kinds of sync. A pull mirror only pulls: `force-pull` refetches the source now and replaces the mirror's refs, and `force-push` is refused. A GitHub sync forces only while it has conflicting refs: `force-pull` lets GitHub win them and `force-push` lets Trylle win, and it refuses if the conflicts changed after the preview. `try repo mirror sync` repairs a stalled GitHub sync without rewriting refs. All of these need repository admin rights.
 - `try repo delete` and `try repo transfer` require `--yes` when not interactive, and `try session delete` does too.
 - Bot tokens cannot be minted or listed from the CLI: the platform injects a run-scoped `TRYLLE_BOT_TOKEN`. Bot management (`try bot ...`) requires a person's CLI key, and only a bot's creator can `try bot edit` it; `--attach` uploads also work with a bot token that has a comment or write scope.
 - `try session logs` reads session history, not a live shell; use `try session ssh` for a shell. Output is chronological and complete from the start of the session.

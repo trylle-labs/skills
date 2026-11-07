@@ -6,7 +6,7 @@ The repository keeps the operational workflow in one [Agent Skills](https://agen
 
 ## Included
 
-- `trylle-cli`: manage repositories, pull requests, issues, stacks, CI, actions configuration, organizations, automations, and other Trylle resources with `try`.
+- `trylle-cli`: manage repositories and mirrors, pull requests, issues, stacks, CI runs and workflow dispatches, actions configuration, organizations, projects, Magic Sessions and Tasks, automations, bots, and other Trylle resources with `try`.
 - Codex plugin and marketplace metadata.
 - Cursor plugin and multi-plugin marketplace metadata.
 - Claude Code plugin and marketplace metadata.
@@ -25,6 +25,15 @@ If authentication is not configured, create an API key in Trylle and save it wit
 
 ```bash
 try auth login
+```
+
+## Install with the CLI
+
+The `try` binary bundles this skill and installs it for the local agent CLIs it finds:
+
+```bash
+try skill install
+try skill update   # replace it with the latest published version
 ```
 
 ## Default Installation via Skills.sh
@@ -135,8 +144,10 @@ claude plugin install trylle@trylle
 │       ├── assets
 │       │   ├── trylle-48.png         # Codex composer icon
 │       │   └── trylle-512.png        # Codex and Cursor plugin logo
-│       └── skills -> ../../skills    # Symink to the actual skill source
+│       └── skills -> ../../skills    # Symlink to the actual skill source
 ├── scripts
+│   ├── map_trylle_cli.py             # walks `try --help` to build the command catalog
+│   ├── regenerate-map.sh
 │   └── validate.py
 └── skills
     └── trylle-cli
