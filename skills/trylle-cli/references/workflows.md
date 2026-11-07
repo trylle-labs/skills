@@ -11,8 +11,13 @@ Use these recipes after reading the core workflow in `SKILL.md`. Replace placeho
 - [Triage issues](#triage-issues)
 - [Work with a PR stack](#work-with-a-pr-stack)
 - [Diagnose CI](#diagnose-ci)
+- [Dispatch a workflow](#dispatch-a-workflow)
+- [Sync a mirror or force a sync](#sync-a-mirror-or-force-a-sync)
 - [Manage variables and secrets](#manage-variables-and-secrets)
 - [Use an uncovered public API endpoint](#use-an-uncovered-public-api-endpoint)
+- [Attach screenshots and videos](#attach-screenshots-and-videos)
+- [Run coding agents with Magic Sessions and Tasks](#run-coding-agents-with-magic-sessions-and-tasks)
+- [Coordinate a project](#coordinate-a-project)
 
 ## Authenticate safely
 
@@ -209,6 +214,66 @@ try stack sync --pull PARENT_NUMBER --json
    ```
 
 Run IDs accept either a workflow run (`try ci runs`) or a single job (`try ci list`). Logs are per job: use the job ID that `watch` prints.
+
+## Dispatch a workflow
+
+1. Discover the dispatchable workflows and their inputs at the ref you will run on. Each input lists its type, whether it is required, its choices, and its default:
+
+   ```bash
+   try ci dispatch -R OWNER/NAME --ref main --json
+   ```
+
+   `--ref` takes a branch name or a full `refs/heads/...` or `refs/tags/...` ref and defaults to the repository's default branch. Only enabled workflows with a `workflow_dispatch` trigger are listed, from both `.trylle/workflows` and `.github/workflows`.
+
+2. Confirm the workflow and input values with the user when the run deploys, releases, or otherwise acts outside CI. Then dispatch, naming the workflow by path, file name, or display name:
+
+   ```bash
+   try ci dispatch deploy -R OWNER/NAME --ref main \
+     -f environment=staging -f dry_run=true --json
+   ```
+
+   Unknown inputs, values outside a choice list, and malformed booleans or numbers are refused before anything runs. Omitted inputs take their declared defaults. A missing required input fails with the `-f` flags to add (`--json` and `--no-prompt` never prompt). The run starts at the commit the inputs were read at.
+
+3. Follow the new run with `try ci watch RUN_ID --exit-status`, or pass `--watch` to dispatch and wait in one step.
+
+## Sync a mirror or force a sync
+
+1. Read the sync state first:
+
+   ```bash
+   try repo mirror status -R OWNER/NAME --json
+   ```
+
+   `kind` is `pull_mirror` (a read-only copy of a source repository), `github_sync` (two-way sync with a GitHub repository), or `none`. For a GitHub sync, `githubSync.conflicts.items` lists refs that diverged on both sides, with each side's SHA.
+
+2. A stalled GitHub sync usually needs a repair, not a force. This rewrites no refs:
+
+   ```bash
+   try repo mirror sync -R OWNER/NAME --json
+   ```
+
+3. Forcing overwrites refs. Pick the direction the user asked for:
+
+   - `force-pull`: on a pull mirror, refetch the source now and replace the mirror's refs. On a GitHub sync, make GitHub win every conflicting ref.
+   - `force-push`: GitHub sync only. Make Trylle win every conflicting ref. Pull mirrors refuse it.
+
+   A GitHub sync with no conflicts has nothing to force, and both commands say so.
+
+4. Preview without the flag. Nothing changes, and the command exits non-zero with the refs it would overwrite:
+
+   ```bash
+   try repo mirror force-push -R OWNER/NAME
+   ```
+
+5. Show that preview to the user. Only after they approve that direction, run it with `--confirm-destructive`:
+
+   ```bash
+   try repo mirror force-push -R OWNER/NAME --confirm-destructive --json
+   ```
+
+   For a GitHub sync, the resolution covers exactly the conflict set from the preview. If the conflicts changed meanwhile, the command refuses, overwrites nothing, and asks you to review them again.
+
+6. Re-run `try repo mirror status` to follow the resolution (`activeResolution`) or the mirror's last pull.
 
 ## Manage variables and secrets
 

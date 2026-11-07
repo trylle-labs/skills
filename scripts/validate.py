@@ -144,7 +144,7 @@ def main() -> int:
     require(len(versions) == 1, f"plugin versions disagree: {sorted(versions)}")
     version = versions.pop()
     require(SEMVER_PATTERN.fullmatch(version) is not None, f"invalid plugin version: {version}")
-    description = "Create and manage repositories, pull requests and reviews, issues, stacked changes, CI workflows, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle."
+    description = "Create and manage repositories and mirrors, pull requests and reviews, issues, stacked changes, CI workflows and dispatches, projects, cloud coding agents, automations, secrets and variables, organization settings, SSH keys, and developer utilities on Trylle."
     require(codex["description"] == description, "invalid Codex description")
     require(cursor["description"] == description, "invalid Cursor description")
     require(claude["description"] == description, "invalid Claude description")
