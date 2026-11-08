@@ -4,7 +4,7 @@ description: Operate the Trylle git platform with the official `try` CLI. Use wh
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.3.0"
+  version: "1.3.1"
 ---
 
 # Trylle CLI, Skill Guide
@@ -30,6 +30,10 @@ The rest of documentation will use `try` as a reference.
 
 Other ways to get the binary:
 ```
+# Homebrew Way (macOS and Linux, pre-built bottles)
+brew tap trylle-labs/tap https://trylle.com/trylle/homebrew-tap
+brew install trylle-labs/tap/trylle-cli
+
 # Python Way
 uv tool install trylle-cli
 

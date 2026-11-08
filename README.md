@@ -21,6 +21,13 @@ npm i -g @trylle/trylle-cli
 try auth status
 ```
 
+Homebrew on macOS and Linux installs a pre-built bottle:
+
+```bash
+brew tap trylle-labs/tap https://trylle.com/trylle/homebrew-tap
+brew install trylle-labs/tap/trylle-cli
+```
+
 If authentication is not configured, create an API key in Trylle and save it without placing the key directly in shell history:
 
 ```bash
