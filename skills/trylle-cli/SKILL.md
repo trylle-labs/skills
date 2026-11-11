@@ -4,7 +4,7 @@ description: Operate the Trylle git platform with the official `try` CLI. Use wh
 license: Apache-2.0
 metadata:
   author: Trylle
-  version: "1.3.1"
+  version: "1.3.2"
 ---
 
 # Trylle CLI, Skill Guide
@@ -111,7 +111,7 @@ uvx upd-skill -g trylle-labs/trylle-cli
 - `try repo delete` and `try repo transfer` require `--yes` when not interactive, and `try session delete` does too.
 - Bot tokens cannot be minted or listed from the CLI: the platform injects a run-scoped `TRYLLE_BOT_TOKEN`. Bot management (`try bot ...`) requires a person's CLI key, and only a bot's creator can `try bot edit` it; `--attach` uploads also work with a bot token that has a comment or write scope.
 - `try session logs` reads session history, not a live shell; use `try session ssh` for a shell. Output is chronological and complete from the start of the session.
-- `try app` works only inside a Trylle session (it reads `TRYLLE_SESSION_ID` and `TRYLLE_DESKTOP_ENDPOINT`); elsewhere it says there is no session to act on. A panel request shows at once when the reader is on that session and otherwise waits until they open it. A cloud session tracks Trylle pull requests only.
+- `try app` works only inside a Trylle session (it reads `TRYLLE_SESSION_ID` and `TRYLLE_APP_ENDPOINT`); elsewhere it says there is no session to act on. A panel request shows at once when the reader is on that session and otherwise waits until they open it. A cloud session tracks Trylle pull requests only.
 - `try project` takes a project id or exact name, and items by id or by the issue they track (`N`, `#N`, or `OWNER/NAME#N`). `item create` files a real issue; `item start` launches a worker agent in the project session and needs `--model` whenever `--provider` differs from the project default. `-R` defaults to the project's only repository. `try project delete` requires `--yes` when not interactive; it leaves issues, pull requests, and the orchestration session in place (archive that with `try session archive`).
 - `try project feed --wait` blocks until new events arrive and then exits, so use it to wait on people instead of polling; add `--timeout` to bound the wait (it exits non-zero when nothing arrived). `--follow` streams until interrupted.
 - `try project resource put --id` is safe to retry; different content under an existing id needs `--replace`.
